@@ -15,19 +15,43 @@ public class TrainMovementSimulator {
         int numberOfPathsThroughTheTrainYard;
 
         //variables holding the details of the trains
+        int trainNumber;
+        int inboundTrack;
+        int outboundTrack;
+        boolean dispatched;
+        boolean hold;
+        int dispatchSequence;
+
+        //this is a dummy switch which is used to initialize a trains switches when the train object is first created before
+        //track assignments are made. The switch with switchNum == 0 does not exist in our train yard simulation
+        Switch dummySwitch = new Switch(0);
 
 
 
         //variables holding the details of the train yard
+        int[] inboundYardTrack = new int[MAXALIGNMENTS];
+        int[] firstYardSwitchNumber = new int[MAXALIGNMENTS];
+        int[] secondYardSwitchNumber = new int[MAXALIGNMENTS];
+        int[] thirdYardSwitchNumber = new int[MAXALIGNMENTS];
+        int[] outboundYardTrack = new int[MAXALIGNMENTS];
 
 
         //theFleet contains all the trains in the simulation run that need to move through the train yard
-        //Train[] theFleet = new Train[MAXTRAINS];
+        Train[] theFleet = new Train[MAXTRAINS];
 
 
         //define the file, file reader, buffered reader, and scanner objects needed
         File theFleetFile = new File("theFleetFile.csv"); //info on the trains in the sim
         File theYardFile = new File("theYardFile.csv"); //info on the configuration of the yard
+        FileReader theFleetFileReader = null;
+        FileReader theYardFileReader = null;
+        BufferedReader theFleetFileBufferedReader = null;
+        BufferedReader theYardFileBufferedReader = null;
+        Scanner theFleetFileScanner = null;
+        Scanner theYardFileScanner = null;
+        String aTrain = null;
+        String anAlignment = null;
+        int counter; //a generic loop counter to count the number of trains in a simulation run
 
         try {
             System.out.println("\n Spring 2025 - Project 2 - Train Movement Simulator \n\n");
@@ -48,14 +72,35 @@ public class TrainMovementSimulator {
             //END DEBUGGING BLOCK
 
             //read a train's details
+            counter = 0;
+            theFleetFileReader = new FileReader(theFleetFile);
+            theFleetFileBufferedReader = new BufferedReader(theFleetFileReader);
+            aTrain = theFleetFileBufferedReader.readLine(); //read a line from TheFleetFile
 
-            //DEBUGGING BLOCK
-            //System.out.println(" " + trainNumber + "\t\t\t" + inboundTrack + "\t\t\t" + outboundTrack + "\t\t\t" + hold + "\t\t\t" + dispatched + "\t\t\t" + dispatchSequence);
-            //System.out.println();
+            while(aTrain != null) {
+                theFleetFileScanner = new Scanner(aTrain).useDelimiter("\\s*,\\s*");
+                trainNumber = theFleetFileScanner.nextInt();
+                inboundTrack = theFleetFileScanner.nextInt();
+                outboundTrack = theFleetFileScanner.nextInt();
+                dispatched = false;
+                hold = false;
+                dispatchSequence = 0;
 
-            //Create this train object
+                //DEBUGGING BLOCK
+                System.out.println(" " + trainNumber + "\t\t\t" + inboundTrack + "\t\t\t" + outboundTrack + "\t\t\t" + hold + "\t\t\t" + dispatched + "\t\t\t" + dispatchSequence);
+                System.out.println();
+                //END DEBUGGING BLOCK
 
-            //Get the next line of train data from theFleetFile
+                //create the train object
+                theFleet[counter] = new Train(trainNumber, inboundTrack, outboundTrack, dummySwitch, dummySwitch, dummySwitch, hold, dispatched);
+
+                counter++; //increment counter
+
+                aTrain = theFleetFileBufferedReader.readLine(); //read in the next line in theFleetFile
+            }
+
+            numberOfTrainsInTheSimulationFleet = counter;
+            System.out.println("There are " + numberOfTrainsInTheSimulationFleet + " train(s) in the simulation fleet.");
 
             //Read in the theYardConfiguration.csv File
             //this file contains the information on the train yard configuration. This is how dispatcher knows
@@ -112,6 +157,9 @@ public class TrainMovementSimulator {
         //DEBUGGING BLOCK
 
         //END DEBUGGING BLOCK
+
+        System.out.println("\n ");
+        System.out.println("\n\n * % * % * % SIMULATION ENDS % * % * % * \n");
 
     }
 }
