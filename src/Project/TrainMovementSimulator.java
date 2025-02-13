@@ -111,24 +111,65 @@ public class TrainMovementSimulator {
             //example: 1,1,3,4,1
             //read theFleetFile into an array and get the number of lines in the file as well to represent the fleetSize
 
-            //DEBUGGING BLOCK
+            counter = 0;
+            theYardFileReader = new FileReader(theYardFile);
+            theYardFileBufferedReader = new BufferedReader(theYardFileReader);
+            anAlignment = theYardFileBufferedReader.readLine();
 
+            //DEBUGGING BLOCK
+            System.out.println("\nDetails of the Train Yard being simulated this run\n");
+            System.out.println("Inbound Track           Switch 1            Switch 2            Switch 3            Outbound Track");
+            System.out.println("------------------------------------------------------------------------------------------------------------");
             //END DEBUGGING BLOCK
 
-            //read the yard details -
+            //read the yard details
+
+            while(anAlignment != null) {
+                theYardFileScanner = new Scanner(anAlignment).useDelimiter("\\s*,\\s*");
+                inboundYardTrack[counter] = theYardFileScanner.nextInt();
+                firstYardSwitchNumber[counter] = theYardFileScanner.nextInt();
+                secondYardSwitchNumber[counter] = theYardFileScanner.nextInt();
+                thirdYardSwitchNumber[counter] = theYardFileScanner.nextInt();
+                outboundYardTrack[counter] = theYardFileScanner.nextInt();
+
+                //DEBUGGING BLOCK
+                System.out.println(" " + inboundYardTrack[counter] + "\t\t\t" + firstYardSwitchNumber[counter] + "\t\t\t" + secondYardSwitchNumber[counter] + "\t\t\t" + thirdYardSwitchNumber[counter] + "\t\t\t" + outboundYardTrack[counter]);
+                System.out.println();
+                //END DEBUGGING BLOCK
+
+                ++counter;
+                anAlignment = theYardFileBufferedReader.readLine();
+            }
+
+            numberOfPathsThroughTheTrainYard = counter;
 
             //DEBUGGING BLOCK
+            System.out.println("There are " + numberOfPathsThroughTheTrainYard + " path(s) in the simulation yard.");
             //END DEBUGGING BLOCK
 
             //create the switch objects
+            Switch[] switches = new Switch[MAXSWITCHES];
+
+            for(int i = 0; i < MAXSWITCHES; ++i) {
+                switches[i] = new Switch(i + 1);
+            }
 
             //make the assignment of switches for each train in the simulation fleet
+            for(int i = 0; i < numberOfTrainsInTheSimulationFleet; ++i) {
+                boolean hasRoute = false;
+                for(int j = 0; j < numberOfPathsThroughTheTrainYard; ++j) {
+                    if((inboundYardTrack[j] == theFleet[i].inboundTrackNum) && (outboundYardTrack[j] == theFleet[i].outboundTrackNum)) {
+                        theFleet[i].firstSwitch = switches[firstYardSwitchNumber[j]];
+                        theFleet[i].secondSwitch = switches[secondYardSwitchNumber[j]];
+                        theFleet[i].thirdSwitch = switches[thirdYardSwitchNumber[j]];
+                        hasRoute = true;
+                        break;
+                    }
+                }
 
-
-            //DEBUGGING BLOCK
-
-            //END DEBUGGING BLOCK
-
+                if(!hasRoute)
+                    theFleet[i].hold = true;
+            }
         } //end try block
         catch(Exception e){
             e.printStackTrace();
