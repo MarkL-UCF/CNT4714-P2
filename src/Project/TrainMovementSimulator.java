@@ -2,6 +2,8 @@ package Project;
 
 import java.util.*;
 import java.io.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class TrainMovementSimulator {
     static final int MAXTRAINS = 30; //max number of trains to be routed through the train yard
@@ -87,6 +89,29 @@ public class TrainMovementSimulator {
             e.printStackTrace();
         } //end catch block
 
+        //All trains are now either assigned a route or are on permanent hold (due to no path)
+
+        //DEBUGGING BLOCK
+        //System.out.println("\n * * * * * * * * * * SIMULATION CONFIGURATION DETAILS COMPLETE * * * * * * * * * * ");
+        //System.out.println("\n\n");
+        //System.out.println("\n TRAIN MOVEMENT SIMULATION BEGINS.....\n\n\n");
+        //END DEBUGGING BLOCK
+
+        //create the train fleet (a thread pool) of MAXTRAINS size
+        ExecutorService TrainFleet = Executors.newFixedThreadPool(MAXTRAINS);
+        //start the trains running
+
+        //call to shut down the executor service
+        TrainFleet.shutdown(); //start the shutdown process - no new threads will be started after this call
+
+        while(!TrainFleet.isTerminated()) {
+            //simulation thread still running
+        }
+        //System.out.println("Finished all threads");
+
+        //DEBUGGING BLOCK
+
+        //END DEBUGGING BLOCK
 
     }
 }
