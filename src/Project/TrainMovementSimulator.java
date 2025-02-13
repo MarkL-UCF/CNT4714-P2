@@ -41,8 +41,8 @@ public class TrainMovementSimulator {
 
 
         //define the file, file reader, buffered reader, and scanner objects needed
-        File theFleetFile = new File("theFleetFile.csv"); //info on the trains in the sim
-        File theYardFile = new File("theYardFile.csv"); //info on the configuration of the yard
+        File theFleetFile = new File("src/theFleetFile.csv"); //info on the trains in the sim
+        File theYardFile = new File("src/theYardFile.csv"); //info on the configuration of the yard
         FileReader theFleetFileReader = null;
         FileReader theYardFileReader = null;
         BufferedReader theFleetFileBufferedReader = null;

@@ -4,11 +4,13 @@ package Project;
 //switch objects shared by the trains moving through the train yard
 public class Switch {
     //define class variables as needed
+    protected int switchNum;
+
 
     //constructor method
     //switch objects
-    public Switch() {
-
+    public Switch(int switchNumArg) {
+        this.switchNum = switchNumArg;
     }
 
     //method for trains to acquire the switch locks
