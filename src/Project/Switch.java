@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Switch {
     //define class variables as needed
     protected int switchNum;
-    private ReentrantLock lock;
+    private final ReentrantLock lock;
 
     //constructor method
     //switch objects
@@ -18,11 +18,11 @@ public class Switch {
 
     //method for trains to acquire the switch locks
     public boolean lockSwitch() {
-        return true; //testing line - returns true if train asks for the lock
+        return lock.tryLock();
     }
 
     //method for trains to release switch locks they hold
     public void unlockSwitch() {
-        //lock is released by the train currently holding the lock
+        lock.unlock();
     }
 }

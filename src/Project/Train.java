@@ -79,5 +79,42 @@ public class Train implements Runnable {
             //acquire switch locks
             //if all locks acquired then move train
             //else release all locks held - wait for a while and try again
+
+        while(!dispatched) {
+            //handle first switch
+            if(firstSwitch.lockSwitch()) {
+                System.out.println("Train" + trainNum + ": HOLDS LOCK on Switch " + firstSwitch.switchNum + ".");
+
+                //handle second switch
+                if(secondSwitch.lockSwitch()){
+                    System.out.println("Train" + trainNum + ": HOLDS LOCK on Switch " + secondSwitch.switchNum + ".");
+
+                    //handle third switch
+                    if(thirdSwitch.lockSwitch()){
+                        System.out.println("Train" + trainNum + ": HOLDS LOCK on Switch " + thirdSwitch.switchNum + ".");
+                        moveTrain(); //train has all needed switches to moe
+                    }
+                    else{
+                        System.out.println("Train" + trainNum + ": UNABLE TO LOCK third required switch: Switch " + secondSwitch.switchNum + ".");
+                        System.out.println("Train" + trainNum + ": Releasing lock on first and second required switches: Switch " + firstSwitch.switchNum + "and Switch " + secondSwitch.switchNum + ". Train will wait...");
+                        secondSwitch.unlockSwitch();
+                        firstSwitch.unlockSwitch();
+
+                        waitTimeForLockRequest(); //wait
+                    }
+                }
+                else{
+                    System.out.println("Train" + trainNum + ": UNABLE TO LOCK second required switch: Switch " + secondSwitch.switchNum + ".");
+                    System.out.println("Train" + trainNum + ": Releasing lock on first required switch: Switch " + firstSwitch.switchNum + ". Train will wait...");
+                    firstSwitch.unlockSwitch();
+
+                    waitTimeForLockRequest(); //wait
+                }
+            }
+            else{
+                System.out.println("Train" + trainNum + ": UNABLE TO LOCK first required switch: Switch " + firstSwitch.switchNum + ". Train will wait...");
+                waitTimeForLockRequest();
+            }
+        }
     }
 }
