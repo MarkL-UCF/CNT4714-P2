@@ -210,9 +210,9 @@ public class TrainMovementSimulator {
         System.out.println("\nFinal Details of the Train Fleet being simulated this run\n");
 
         for(int i = 0; i < numberOfTrainsInTheSimulationFleet; ++i) {
-            System.out.println("Train Number\t\tInbound Track\t\tOutbound Track\t\tSwitch 1\t\tSwitch 2\t\tSwitch 3\t\t\t\tHold\t\t\t\tDispatched\t\t\t\tDispatch Sequence");
+            System.out.println("Train Number\t\t\tInbound Track\t\t\tOutbound Track\t\t\tSwitch 1\t\t\tSwitch 2\t\t\tSwitch 3\t\t\tHold\t\t\tDispatched\t\t\tDispatch Sequence");
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println(" " + theFleet[i].trainNum + "\t\t\t\t\t" + theFleet[i].inboundTrackNum + "\t\t\t\t\t" + theFleet[i].outboundTrackNum + "\t\t\t\t\t" + theFleet[i].firstSwitch.switchNum + "\t\t\t\t\t" + theFleet[i].secondSwitch.switchNum + "\t\t\t\t\t" + theFleet[i].thirdSwitch.switchNum + "\t\t\t\t\t" + theFleet[i].hold + "\t\t\t\t\t" + theFleet[i].dispatched + "\t\t\t\t\t" + theFleet[i].dispatchSequence + "\n\n");
+            System.out.println(" " + theFleet[i].trainNum + "\t\t\t" + theFleet[i].inboundTrackNum + "\t\t\t" + theFleet[i].outboundTrackNum + "\t\t\t" + theFleet[i].firstSwitch.switchNum + "\t\t\t" + theFleet[i].secondSwitch.switchNum + "\t\t\t" + theFleet[i].thirdSwitch.switchNum + "\t\t\t" + theFleet[i].hold + "\t\t\t" + theFleet[i].dispatched + "\t\t\t" + theFleet[i].dispatchSequence + "\n\n");
         }
 
         System.out.println("\n ");
