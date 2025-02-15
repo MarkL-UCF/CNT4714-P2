@@ -63,9 +63,21 @@ public class Train implements Runnable {
     //moveTrain simulates the train moving from its inbound track through the switches in the yard to the outbound track
     //you may need to play around with this number a bit
     public void moveTrain() {
-        System.out.println("TRAIN " + trainNum + " begins moving through the train yard");
+        System.out.println("Train " + trainNum + ": HOLDS ALL NEEDED SWITCH LOCKS - Train movement begins.\n");
         try{
             Thread.sleep(MOVETIME);
+            System.out.println("Train " + trainNum + ": Clear of yard control.");
+            System.out.println("Train " + trainNum + ": Releasing all switch locks.");
+            firstSwitch.unlockSwitch();
+            System.out.println("Train " + trainNum + ": Unlocks/release lock on Switch " + firstSwitch.switchNum + ".");
+            secondSwitch.unlockSwitch();
+            System.out.println("Train " + trainNum + ": Unlocks/release lock on Switch " + secondSwitch.switchNum + ".");
+            thirdSwitch.unlockSwitch();
+            System.out.println("Train " + trainNum + ": Unlocks/release lock on Switch " + thirdSwitch.switchNum + ".");
+            dispatched = true;
+            dispatchSequence = TrainMovementSimulator.getDispatchCounter();
+            System.out.println("Train " + trainNum + ": Has been dispatched and moves on down the line out of yard control into CTC.\n");
+            System.out.println("@ @ @ TRAIN " + trainNum + ": DISPATCHED @ @ @\n");
         }
         catch(InterruptedException e) {
             e.printStackTrace();
@@ -80,23 +92,23 @@ public class Train implements Runnable {
             //if all locks acquired then move train
             //else release all locks held - wait for a while and try again
 
-        while(!dispatched) {
+        while(!dispatched && !hold) {
             //handle first switch
             if(firstSwitch.lockSwitch()) {
-                System.out.println("Train" + trainNum + ": HOLDS LOCK on Switch " + firstSwitch.switchNum + ".");
+                System.out.println("Train " + trainNum + ": HOLDS LOCK on Switch " + firstSwitch.switchNum + ".\n");
 
                 //handle second switch
                 if(secondSwitch.lockSwitch()){
-                    System.out.println("Train" + trainNum + ": HOLDS LOCK on Switch " + secondSwitch.switchNum + ".");
+                    System.out.println("Train " + trainNum + ": HOLDS LOCK on Switch " + secondSwitch.switchNum + ".\n");
 
                     //handle third switch
                     if(thirdSwitch.lockSwitch()){
-                        System.out.println("Train" + trainNum + ": HOLDS LOCK on Switch " + thirdSwitch.switchNum + ".");
-                        moveTrain(); //train has all needed switches to moe
+                        System.out.println("Train " + trainNum + ": HOLDS LOCK on Switch " + thirdSwitch.switchNum + ".\n");
+                        moveTrain(); //train has all needed switches to move
                     }
                     else{
-                        System.out.println("Train" + trainNum + ": UNABLE TO LOCK third required switch: Switch " + secondSwitch.switchNum + ".");
-                        System.out.println("Train" + trainNum + ": Releasing lock on first and second required switches: Switch " + firstSwitch.switchNum + "and Switch " + secondSwitch.switchNum + ". Train will wait...");
+                        System.out.println("Train " + trainNum + ": UNABLE TO LOCK third required switch: Switch " + secondSwitch.switchNum + ".");
+                        System.out.println("Train " + trainNum + ": Releasing lock on first and second required switches: Switch " + firstSwitch.switchNum + "and Switch " + secondSwitch.switchNum + ". Train will wait...\n");
                         secondSwitch.unlockSwitch();
                         firstSwitch.unlockSwitch();
 
@@ -104,17 +116,23 @@ public class Train implements Runnable {
                     }
                 }
                 else{
-                    System.out.println("Train" + trainNum + ": UNABLE TO LOCK second required switch: Switch " + secondSwitch.switchNum + ".");
-                    System.out.println("Train" + trainNum + ": Releasing lock on first required switch: Switch " + firstSwitch.switchNum + ". Train will wait...");
+                    System.out.println("Train " + trainNum + ": UNABLE TO LOCK second required switch: Switch " + secondSwitch.switchNum + ".");
+                    System.out.println("Train " + trainNum + ": Releasing lock on first required switch: Switch " + firstSwitch.switchNum + ". Train will wait...\n");
                     firstSwitch.unlockSwitch();
 
                     waitTimeForLockRequest(); //wait
                 }
             }
             else{
-                System.out.println("Train" + trainNum + ": UNABLE TO LOCK first required switch: Switch " + firstSwitch.switchNum + ". Train will wait...");
+                System.out.println("Train " + trainNum + ": UNABLE TO LOCK first required switch: Switch " + firstSwitch.switchNum + ". Train will wait...\n");
                 waitTimeForLockRequest();
             }
+        }
+        //check to see if on hold
+        if(hold) {
+            System.out.println("*************");
+            System.out.println("Train " + trainNum + " is on permanent hold and cannot be dispatched.");
+            System.out.println("*************\n");
         }
     }
 }

@@ -5,14 +5,17 @@ import java.io.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@SuppressWarnings("ALL")
 public class TrainMovementSimulator {
     static final int MAXTRAINS = 30; //max number of trains to be routed through the train yard
     static final int MAXALIGNMENTS = 60; //max number of track to switch combinations in the train yard
     static final int MAXSWITCHES = 10; //maximum number of switches in the train yard
 
+    static int dispatchCounter = 0;
+
     public static void main(String[] args) throws InterruptedException {
-        int numberOfTrainsInTheSimulationFleet;
-        int numberOfPathsThroughTheTrainYard;
+        int numberOfTrainsInTheSimulationFleet = 0;
+        int numberOfPathsThroughTheTrainYard = 0;
 
         //variables holding the details of the trains
         int trainNumber;
@@ -159,9 +162,9 @@ public class TrainMovementSimulator {
                 boolean hasRoute = false;
                 for(int j = 0; j < numberOfPathsThroughTheTrainYard; ++j) {
                     if((inboundYardTrack[j] == theFleet[i].inboundTrackNum) && (outboundYardTrack[j] == theFleet[i].outboundTrackNum)) {
-                        theFleet[i].firstSwitch = switches[firstYardSwitchNumber[j]];
-                        theFleet[i].secondSwitch = switches[secondYardSwitchNumber[j]];
-                        theFleet[i].thirdSwitch = switches[thirdYardSwitchNumber[j]];
+                        theFleet[i].firstSwitch = switches[firstYardSwitchNumber[j] - 1];
+                        theFleet[i].secondSwitch = switches[secondYardSwitchNumber[j] - 1];
+                        theFleet[i].thirdSwitch = switches[thirdYardSwitchNumber[j] - 1];
                         hasRoute = true;
                         break;
                     }
@@ -178,29 +181,47 @@ public class TrainMovementSimulator {
         //All trains are now either assigned a route or are on permanent hold (due to no path)
 
         //DEBUGGING BLOCK
-        //System.out.println("\n * * * * * * * * * * SIMULATION CONFIGURATION DETAILS COMPLETE * * * * * * * * * * ");
-        //System.out.println("\n\n");
-        //System.out.println("\n TRAIN MOVEMENT SIMULATION BEGINS.....\n\n\n");
+        System.out.println("\n * * * * * * * * * * SIMULATION CONFIGURATION DETAILS COMPLETE * * * * * * * * * * ");
+        System.out.println("\n\n");
+        System.out.println("\n TRAIN MOVEMENT SIMULATION BEGINS.....\n\n\n");
         //END DEBUGGING BLOCK
 
         //create the train fleet (a thread pool) of MAXTRAINS size
         ExecutorService TrainFleet = Executors.newFixedThreadPool(MAXTRAINS);
+
         //start the trains running
+        for(int i = 0; i < numberOfTrainsInTheSimulationFleet; ++i) {
+            TrainFleet.execute(theFleet[i]);
+        }
 
         //call to shut down the executor service
         TrainFleet.shutdown(); //start the shutdown process - no new threads will be started after this call
 
+
         while(!TrainFleet.isTerminated()) {
             //simulation thread still running
         }
-        //System.out.println("Finished all threads");
+
 
         //DEBUGGING BLOCK
-
+        System.out.println("Finished all threads");
         //END DEBUGGING BLOCK
+
+        System.out.println("\nFinal Details of the Train Fleet being simulated this run\n");
+
+        for(int i = 0; i < numberOfTrainsInTheSimulationFleet; ++i) {
+            System.out.println("Train Number\t\tInbound Track\t\tOutbound Track\t\tSwitch 1\t\tSwitch 2\t\tSwitch 3\t\t\t\tHold\t\t\t\tDispatched\t\t\t\tDispatch Sequence");
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println(" " + theFleet[i].trainNum + "\t\t\t\t\t" + theFleet[i].inboundTrackNum + "\t\t\t\t\t" + theFleet[i].outboundTrackNum + "\t\t\t\t\t" + theFleet[i].firstSwitch.switchNum + "\t\t\t\t\t" + theFleet[i].secondSwitch.switchNum + "\t\t\t\t\t" + theFleet[i].thirdSwitch.switchNum + "\t\t\t\t\t" + theFleet[i].hold + "\t\t\t\t\t" + theFleet[i].dispatched + "\t\t\t\t\t" + theFleet[i].dispatchSequence + "\n\n");
+        }
 
         System.out.println("\n ");
         System.out.println("\n\n * % * % * % SIMULATION ENDS % * % * % * \n");
 
+    }
+
+    public static int getDispatchCounter() {
+        ++dispatchCounter;
+        return dispatchCounter;
     }
 }
